@@ -10,7 +10,10 @@ const app = new Vue({
             design: {
                 backgroundImage: "",
                 color: "#343a40",
-                opacity: 1
+                opacity: 1,
+                anchorColor: "#007bff",
+                btnColor: "#5a6268",
+                btnBorderColor: "#5a6268"
             }
         },
         search: "",
