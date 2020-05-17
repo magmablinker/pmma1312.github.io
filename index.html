@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>home</title>
+    <link rel="icon" href="/public/img/favicon.png">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .card {
+            -webkit-box-shadow: 7px 8px 25px -10px rgba(0,0,0,0.75);
+            -moz-box-shadow: 7px 8px 25px -10px rgba(0,0,0,0.75);
+            box-shadow: 7px 8px 30px -10px rgba(0,0,0,0.75);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px !important;
+        }
+
+        .icon-white {
+            color: white;
+            margin: auto;
+            line-height: inherit !important;
+            font-size: 24px;
+        }
+
+        input[type=text] {
+            background-color: rgba(0, 0, 0, 0.09);
+            border: 0px;
+            border-radius: 6px !important;
+            max-width: 100%;
+            color: white !important;
+            font-size: 18px;
+            padding: 6px;
+            transition: all .5s ease-out;
+        }   
+
+        select:focus, input:focus {
+            outline: none !important;
+        }
+
+        input:focus {
+            background-color: rgba(0, 0, 0, 0.2) !important;
+            transition: all .5s ease-in !important;
+        }
+
+        .urls {
+            max-height: 220px;
+            overflow: auto;
+        }
+
+        .urls::-webkit-scrollbar {
+            width: .9em;
+        }
+
+        .urls::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.096);
+            border-bottom-right-radius: 6px;
+        }
+
+        .urls::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.096);
+            outline: 1px solid black;
+        }
+
+        #header {
+            border-radius: 6px !important;
+        }
+
+        .clock {
+            background-color: rgba(0, 0, 0, 0.09);
+            padding: 8px;
+            border-radius: 6px;
+            width: auto;
+            -webkit-box-shadow: inset 0px 0px 24px 2px #25292e;
+            -moz-box-shadow: inset 0px 0px 24px 2px #25292e;
+            box-shadow: inset 0px 0px 24px 2px #25292e;
+            width: 128px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-header {
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .noBorderBottom {
+            border-bottom: 0px !important;
+        }
+
+        select {
+            background-color: rgba(0, 0, 0, 0.09);
+            color: white;
+            border-radius: 6px;
+            padding: 4px;
+            width: 100%;
+        }
+
+        .add-url {
+            width: 100%;
+            white-space: nowrap;
+        }
+
+        option {
+            background-color: #6c757d;
+        }
+
+        .display-block {
+            display: block;
+        }
+
+        .icon-delete:hover {
+            cursor: pointer;
+        }
+
+        .fade-enter-active, .fade-leave-active {
+            transition: all 1s;
+        }
+
+        .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .icon-sm {
+            font-size: 16px;
+
+        }
+
+        .col-url {
+            flex: auto !important;
+            width: auto !important;
+            min-width: 33.33333% !important;
+            max-width: 100% !important;
+        }
+
+        .padding-15 {
+            padding-left: 15px;
+        }
+
+        @media (max-width: 800px) {
+            .padding-15 {
+                padding-left: 0px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-dark">
+    <div class="container-fluid text-light" id="root">
+        <div class="row m-3">
+            <div class="col-12 mb-3">
+                <div class="card bg-dark rounded">
+                    <div class="card-header noBorderBottom" id="header">
+                        <div class="row align-items-center">
+                            <div class="col-12 col-md-9">
+                                <h2 class="display-3 text-uppercase">bitgni home page</h2>
+                            </div>
+                            <div class="col-12 col-md-3">
+                                <h4 class="clock float-right">{{ clock }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 mb-3">
+                <div class="card bg-dark">
+                    <div class="card-header">
+                        <h3>Google Search</h3>
+                    </div>
+                    <div class="card-body">
+                        <form @submit="googleSearch">
+                            <div class="input-group input-group-lg">
+                                <input type="text" class="form-control" v-model="search">
+                                <button type="submit" class="ml-3 btn btn-secondary">
+                                    <i class="material-icons icon-white" title="Search">search</i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <transition-group name="fade" tag="div" class="row">
+                    <div class="col-12 col-md-4 col-url mb-3 d-flex " v-bind:key="category.id" v-for="category in categories">
+                        <div class="card bg-dark flex-fill">
+                            <div class="card-header">
+                                <h3 class="d-inline">{{ category.name }}</h3> 
+                                <i class="material-icons icon-white float-right icon-delete" title="Delete" @click="deleteCategory(category.id)">clear</i>
+                            </div>
+                            <div class="card-body urls">
+                                <ul class="list-unstyled">
+                                    <li v-for="url in category.urls" class="align-middle">
+                                        <i class="material-icons icon-sm icon-white icon-delete mr-2" title="Remove URL" @click="removeUrl(category.id, url.id)">clear</i>
+                                        <a :href="url.url">
+                                            {{ url.name }}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </transition-group>
+            </div>
+            <div class="col-12 mb-3">
+                <div class="card bg-dark">
+                    <div class="card-header" :class="{ noBorderBottom: !showSettings }">
+                        <div class="row align-items-center">
+                            <div class="col-12 col-md-10">
+                                <h3>Settings</h3>
+                            </div>
+                            <div class="col-12 col-md-2 text-right">
+                                <button class="btn btn-secondary" @click="showSettingsClick">
+                                    {{ btnSettingsText }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body" v-show="showSettings">
+                        <div class="row d-flex">
+                            <div class="col-12 col-md-6 d-flex">
+                                <div class="card bg-dark flex-fill mb-2">
+                                    <div class="card-body text-center">
+                                        <h4 class="p-3">Manage URLs</h4>
+                                        <div class="row">
+                                            <div class="col-12 p-2 pb-0">
+                                                <select v-model="categoryId">
+                                                    <option :value="category.id" v-for="category in categories">{{ category.name }}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-12 col-md-6 p-2 pt-0">
+                                                        <button class="btn btn-secondary add-url" @click="addUrl">
+                                                            Add URL
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-12 col-md-6 p-2 pt-0">
+                                                        <button class="btn btn-secondary add-url" @click="addCategory">
+                                                            Add Category
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 d-flex">
+                                <div class="card bg-dark flex-fill mb-2">
+                                    <div class="card-body text-center">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <h4 class="p-3">Import/Export Settings</h4>
+                                            </div>
+                                            <div class="col-12">
+                                                <button class="btn btn-secondary mb-2" @click="importSettings">
+                                                    Import
+                                                </button>
+                                                <button class="btn btn-secondary mb-2" @click="exportSettings">
+                                                    Export
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="/public/js/index.js"></script>
+</body>
+</html>
