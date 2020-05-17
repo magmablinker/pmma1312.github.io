@@ -5,7 +5,14 @@ const app = new Vue({
         timer: "",
         showSettings: false,
         btnSettingsText: "Show",
-        categories: [],
+        config: {
+            categories: [],
+            design: {
+                backgroundImage: "",
+                color: "#343a40",
+                opacity: 1
+            }
+        },
         search: "",
         categoryId: 1
     },
@@ -45,7 +52,7 @@ const app = new Vue({
 
                     if(!this.checkForCategory(name)) {
                         let id = this.getCategoryId();
-                        this.categories.push({
+                        this.config.categories.push({
                             "id": id,
                             "name": name,
                             "urls": []
@@ -64,13 +71,13 @@ const app = new Vue({
             });
         },
         checkForCategory(name) {
-            return this.categories.map(category => {
+            return this.config.categories.map(category => {
                 return category.name.toLowerCase();
             }).includes(name.toLowerCase());
         },
         getCategoryId() {
-            if(this.categories.length > 0) {
-                return this.categories[this.categories.length - 1].id + 1;
+            if(this.config.categories.length > 0) {
+                return this.config.categories[this.config.categories.length - 1].id + 1;
             } else {
                 return 1;
             }
@@ -93,11 +100,11 @@ const app = new Vue({
 
             if(formValues) {
                 try {
-                    if(this.categories.length > 0) {
+                    if(this.config.categories.length > 0) {
                         let categoryIndex = this.getCategoryIndex(this.categoryId);
 
                         if(categoryIndex > -1) {
-                            this.categories[categoryIndex].urls.push({
+                            this.config.categories[categoryIndex].urls.push({
                                 "id": this.getUrlId(categoryIndex),
                                 "name": formValues[0],
                                 "url": formValues[1]
@@ -119,15 +126,15 @@ const app = new Vue({
 
         },
         getUrlId(categoryIndex) {
-            if(this.categories[categoryIndex].urls.length > 0) {
-                return this.categories[categoryIndex].urls[this.categories[categoryIndex].urls.length - 1].id + 1;
+            if(this.config.categories[categoryIndex].urls.length > 0) {
+                return this.config.categories[categoryIndex].urls[this.config.categories[categoryIndex].urls.length - 1].id + 1;
             } else {
                 return 1;
             }
         },
         saveData() {
             try {
-                localStorage.setItem("categories", JSON.stringify(this.categories));
+                localStorage.setItem("config", JSON.stringify(this.config));
             } catch(e) {
                 Swal.fire(
                     "Error!",
@@ -138,10 +145,10 @@ const app = new Vue({
         },
         loadData() {
             try {
-                let data = localStorage.getItem("categories");
+                let data = localStorage.getItem("config");
 
                 if(data) {
-                    this.categories = JSON.parse(data);
+                    this.config = JSON.parse(data);
                 }
             } catch(e) {
                 Swal.fire(
@@ -152,8 +159,8 @@ const app = new Vue({
             }
         },
         exportSettings() {
-            if(this.categories.length > 0) {
-                let fileURL = window.URL.createObjectURL(new Blob([JSON.stringify(this.categories)]));
+            if(this.config) {
+                let fileURL = window.URL.createObjectURL(new Blob([JSON.stringify(this.config)]));
                 let fileLink = document.createElement('a');
 
                 fileLink.href = fileURL;
@@ -181,8 +188,8 @@ const app = new Vue({
                     this.readFileContent(result.value).then(content => {
                         let parsedContent = JSON.parse(content);
 
-                        if(parsedContent.length > 0) {
-                            this.categories = parsedContent;
+                        if(parsedContent) {
+                            this.config = parsedContent;
                             this.saveData();
                         }
                     }).catch(error => console.log(error));
@@ -212,7 +219,7 @@ const app = new Vue({
                     let index = this.getCategoryIndex(categoryId);
 
                     if(index > -1) {
-                        this.categories.splice(index, 1);
+                        this.config.categories.splice(index, 1);
                         this.saveData();
                     } else {
                         Swal.fire(
@@ -242,7 +249,7 @@ const app = new Vue({
                         let urlIndex = this.getUrlIndex(categoryIndex, urlId);
         
                         if(urlIndex > -1) {
-                            this.categories[categoryIndex].urls.splice(urlIndex, 1);
+                            this.config.categories[categoryIndex].urls.splice(urlIndex, 1);
                             this.saveData();
                         }
                     }
@@ -252,8 +259,8 @@ const app = new Vue({
         getCategoryIndex(categoryId) {
             let index = -1;
 
-            for(let i = 0; i < this.categories.length; i++) {
-                if(this.categories[i].id == categoryId) {
+            for(let i = 0; i < this.config.categories.length; i++) {
+                if(this.config.categories[i].id == categoryId) {
                     index = i;
                 }
             }
@@ -263,13 +270,38 @@ const app = new Vue({
         getUrlIndex(categoryIndex, urlId) {
             let index = -1;
 
-            for(let i = 0; i < this.categories[categoryIndex].urls.length; i++) {
-                if(this.categories[categoryIndex].urls[i].id == urlId) {
+            for(let i = 0; i < this.config.categories[categoryIndex].urls.length; i++) {
+                if(this.config.categories[categoryIndex].urls[i].id == urlId) {
                     index = i;
                 }
             }
 
             return index;
+        },
+        changeBackgroundImage() {
+            let file = this.$refs.backgroundImage.files[0];
+
+            if(file) {
+                this.readFileContentBase64(file).then(data => {
+                    this.config.design.backgroundImage = data;
+                    this.saveData();
+                    this.$refs.backgroundImage.type = 'text';
+                    this.$refs.backgroundImage.type = 'file';
+                }).catch(error => console.log(error));
+            }
+        },
+        readFileContentBase64(file) {
+            const reader = new FileReader();
+            return new Promise((resolve, reject) => {
+                reader.onload = event => resolve(event.target.result);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+    },
+    computed: {
+        bgColor() {
+            return `rgba(${parseInt(this.config.design.color.slice(-6, -4), 16)}, ${parseInt(this.config.design.color.slice(-4, -2), 16)}, ${parseInt(this.config.design.color.slice(-2), 16)}, ${this.config.design.opacity.toString(16)})`;
         }
     },
     mounted() {

@@ -9,9 +9,9 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         .card {
-            -webkit-box-shadow: 7px 8px 25px -10px rgba(0,0,0,0.75);
-            -moz-box-shadow: 7px 8px 25px -10px rgba(0,0,0,0.75);
-            box-shadow: 7px 8px 30px -10px rgba(0,0,0,0.75);
+            -webkit-box-shadow: 7px 8px 25px -10px rgb(0, 0, 0);
+            -moz-box-shadow: 7px 8px 25px -10px rgb(0, 0, 0);
+            box-shadow: 7px 8px 30px -10px rgb(0, 0, 0);
             border: 2px solid rgba(255, 255, 255, 0.1);
             border-radius: 6px !important;
         }
@@ -118,7 +118,7 @@
 
         .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(100px);
         }
 
         .icon-sm {
@@ -142,17 +142,29 @@
                 padding-left: 0px;
             }
         }
+
+        .bg-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
     </style>
 </head>
 <body class="bg-dark">
     <div class="container-fluid text-light" id="root">
+        <div class="bg-image" :style="{ backgroundImage: `url(${config.design.backgroundImage})`}"></div>
         <div class="row m-3">
             <div class="col-12 mb-3">
-                <div class="card bg-dark rounded">
+                <div class="card bg-dark rounded" :style="{ backgroundColor: `${bgColor} !important` }">
                     <div class="card-header noBorderBottom" id="header">
                         <div class="row align-items-center">
                             <div class="col-12 col-md-9">
-                                <h2 class="display-3 text-uppercase">bitgni home page</h2>
+                                <h2 class="display-3 text-uppercase">home page</h2>
                             </div>
                             <div class="col-12 col-md-3">
                                 <h4 class="clock float-right">{{ clock }}</h4>
@@ -162,7 +174,7 @@
                 </div>
             </div>
             <div class="col-12 mb-3">
-                <div class="card bg-dark">
+                <div class="card bg-dark" :style="{ backgroundColor: `${bgColor} !important` }">
                     <div class="card-header">
                         <h3>Google Search</h3>
                     </div>
@@ -180,8 +192,8 @@
             </div>
             <div class="col-12">
                 <transition-group name="fade" tag="div" class="row">
-                    <div class="col-12 col-md-4 col-url mb-3 d-flex " v-bind:key="category.id" v-for="category in categories">
-                        <div class="card bg-dark flex-fill">
+                    <div class="col-12 col-md-4 col-url mb-3 d-flex " v-bind:key="category.id" v-for="category in config.categories">
+                        <div class="card bg-dark flex-fill" :style="{ backgroundColor: `${bgColor} !important` }">
                             <div class="card-header">
                                 <h3 class="d-inline">{{ category.name }}</h3> 
                                 <i class="material-icons icon-white float-right icon-delete" title="Delete" @click="deleteCategory(category.id)">clear</i>
@@ -201,7 +213,7 @@
                 </transition-group>
             </div>
             <div class="col-12 mb-3">
-                <div class="card bg-dark">
+                <div class="card bg-dark" :style="{ backgroundColor: `${bgColor} !important` }">
                     <div class="card-header" :class="{ noBorderBottom: !showSettings }">
                         <div class="row align-items-center">
                             <div class="col-12 col-md-10">
@@ -216,26 +228,49 @@
                     </div>
                     <div class="card-body" v-show="showSettings">
                         <div class="row d-flex">
-                            <div class="col-12 col-md-6 d-flex">
-                                <div class="card bg-dark flex-fill mb-2">
-                                    <div class="card-body text-center">
-                                        <h4 class="p-3">Manage URLs</h4>
-                                        <div class="row">
-                                            <div class="col-12 p-2 pb-0">
-                                                <select v-model="categoryId">
-                                                    <option :value="category.id" v-for="category in categories">{{ category.name }}</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-12">
+                            <div class="col-12 col-md-6 d-flex mb-2">
+                                <div class="row">
+                                    <div class="col-12 mb-2 d-flex">
+                                        <div class="card bg-dark flex-fill" :style="{ backgroundColor: `${bgColor} !important` }">
+                                            <div class="card-body text-center">
+                                                <h4 class="p-3">Manage URLs</h4>
                                                 <div class="row">
-                                                    <div class="col-12 col-md-6 p-2 pt-0">
-                                                        <button class="btn btn-secondary add-url" @click="addUrl">
-                                                            Add URL
-                                                        </button>
+                                                    <div class="col-12 p-2 pb-0">
+                                                        <select v-model="categoryId">
+                                                            <option :value="category.id" v-for="category in config.categories">{{ category.name }}</option>
+                                                        </select>
                                                     </div>
-                                                    <div class="col-12 col-md-6 p-2 pt-0">
-                                                        <button class="btn btn-secondary add-url" @click="addCategory">
-                                                            Add Category
+                                                    <div class="col-12">
+                                                        <div class="row">
+                                                            <div class="col-12 col-md-6 p-2 pt-0">
+                                                                <button class="btn btn-secondary add-url" @click="addUrl">
+                                                                    Add URL
+                                                                </button>
+                                                            </div>
+                                                            <div class="col-12 col-md-6 p-2 pt-0">
+                                                                <button class="btn btn-secondary add-url" @click="addCategory">
+                                                                    Add Category
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 d-flex">
+                                        <div class="card bg-dark flex-fill" :style="{ backgroundColor: `${bgColor} !important` }">
+                                            <div class="card-body text-center">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <h4 class="p-3">Import/Export Settings</h4>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <button class="btn btn-secondary mb-2" @click="importSettings">
+                                                            Import
+                                                        </button>
+                                                        <button class="btn btn-secondary mb-2" @click="exportSettings">
+                                                            Export
                                                         </button>
                                                     </div>
                                                 </div>
@@ -244,20 +279,40 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-6 d-flex">
-                                <div class="card bg-dark flex-fill mb-2">
-                                    <div class="card-body text-center">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <h4 class="p-3">Import/Export Settings</h4>
+                            <div class="col-12 col-md-6 d-flex mb-2">
+                                <div class="row">
+                                    <div class="col-12 d-flex">
+                                        <div class="card bg-dark flex-fill mb-2" :style="{ backgroundColor: `${bgColor} !important` }">
+                                            <div class="card-body text-center">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <h4 class="p-3">Background Image</h4>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <input type="file" name="background-image" accept="image/*" ref="backgroundImage" @change="changeBackgroundImage">
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="col-12">
-                                                <button class="btn btn-secondary mb-2" @click="importSettings">
-                                                    Import
-                                                </button>
-                                                <button class="btn btn-secondary mb-2" @click="exportSettings">
-                                                    Export
-                                                </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 d-flex">
+                                        <div class="card bg-dark flex-fill" :style="{ backgroundColor: `${bgColor} !important` }">
+                                            <div class="card-body text-center">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <h4 class="p-3">Panel Background Color</h4>
+                                                    </div>
+                                                    <div class="col-12 text-left">
+                                                        <div class="form-group">
+                                                            <label for="color">Color</label>
+                                                            <input type="color" name="color" v-model="config.design.color" class="form-control" @change="saveData">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="opacity">Opacity</label>
+                                                            <input type="range" name="opacity" min="0" max="1" step="0.01" class="form-control" v-model="config.design.opacity" @change="saveData">
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
