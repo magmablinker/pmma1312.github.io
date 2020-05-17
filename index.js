@@ -13,7 +13,10 @@ const app = new Vue({
                 opacity: 1,
                 anchorColor: "#007bff",
                 btnColor: "#5a6268",
-                btnBorderColor: "#5a6268"
+                btnBorderColor: "#5a6268",
+                btnOpacity: 1,
+                borderColor: "#ffffff1a",
+                borderOpacity: 1
             }
         },
         search: "",
@@ -305,6 +308,12 @@ const app = new Vue({
     computed: {
         bgColor() {
             return `rgba(${parseInt(this.config.design.color.slice(-6, -4), 16)}, ${parseInt(this.config.design.color.slice(-4, -2), 16)}, ${parseInt(this.config.design.color.slice(-2), 16)}, ${this.config.design.opacity.toString(16)})`;
+        },
+        btnColor() {
+            return `rgba(${parseInt(this.config.design.btnColor.slice(-6, -4), 16)}, ${parseInt(this.config.design.btnColor.slice(-4, -2), 16)}, ${parseInt(this.config.design.btnColor.slice(-2), 16)}, ${this.config.design.btnOpacity.toString(16)})`;
+        },
+        borderColor() {
+            return `rgba(${parseInt(this.config.design.borderColor.slice(-6, -4), 16)}, ${parseInt(this.config.design.borderColor.slice(-4, -2), 16)}, ${parseInt(this.config.design.borderColor.slice(-2), 16)}, ${this.config.design.borderOpacity.toString(16)})`;
         }
     },
     mounted() {
