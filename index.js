@@ -15,7 +15,7 @@ const app = new Vue({
                 btnColor: "#5a6268",
                 btnBorderColor: "#5a6268",
                 btnOpacity: 1,
-                borderColor: "#ffffff1a",
+                borderColor: "#5a6268",
                 borderOpacity: 1
             }
         },
